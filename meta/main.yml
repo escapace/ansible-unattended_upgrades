@@ -1,0 +1,22 @@
+galaxy_info:
+  author: Mark Milstein
+  description: unattended upgrades role
+  issue_tracker_url: https://github.com/epiloque/ansible-unattended-upgrades/issues
+  license: BSD
+  min_ansible_version: 1.2
+  github_branch: master
+  platforms:
+  - name: EL
+    versions:
+    - 7
+  - name: Ubuntu
+    versions:
+    - xenial
+    - trusty
+
+  galaxy_tags:
+  - epiloque
+  - security
+  - unattended-upgrades
+
+dependencies: []
