@@ -1,0 +1,33 @@
+[commands]
+# what kind of update to use:
+# default                            = yum upgrade
+# security                           = yum --security upgrade
+# security-severity:critical         = yum --sec-severity=critical upgrade
+# minimal                            = yum --bugfix update-minimal
+# minimal-security                   = yum --security update-minimal
+# minimal-security-severity:critical =  --sec-severity=critical update-minimal
+update_cmd = {{ unattended_upgrades_yum_update_cmd }}
+update_messages = yes
+download_updates = yes
+apply_updates = yes
+random_sleep = 360
+
+[emitters]
+system_name = None
+emit_via = stdio
+ouput_width = 80
+
+[email]
+email_from = root@localhost
+email_to = root
+email_host = localhost
+
+[groups]
+group_list = None
+group_package_types = mandatory, default
+
+[base]
+debuglevel = -2
+# skip_broken = True
+mdpolicy = group:main
+
