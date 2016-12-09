@@ -3,8 +3,8 @@
         <img src="https://travis-ci.org/epiloque/ansible-unattended-upgrades.svg?branch=master"
              alt="build status">
     </a>
-        <a href="https://galaxy.ansible.com/epiloque/epiloque">
-        <img src="https://img.shields.io/badge/ansible--galaxy-unattended-upgrades-blue.svg"
+        <a href="https://galaxy.ansible.com/epiloque/unattended-upgrades">
+        <img src="https://img.shields.io/badge/ansible--galaxy-unattended--upgrades-blue.svg"
              alt="ansible galaxy">
     </a>
 </p>
