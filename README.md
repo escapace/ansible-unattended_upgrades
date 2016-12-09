@@ -4,7 +4,7 @@
              alt="build status">
     </a>
         <a href="https://galaxy.ansible.com/epiloque/epiloque">
-        <img src="https://img.shields.io/badge/ansible--galaxy-unattended-upgrades-blue.svg"
+        <img src="https://img.shields.io/badge/ansible--galaxy-unattended--upgrades-blue.svg"
              alt="ansible galaxy">
     </a>
 </p>
