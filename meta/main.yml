@@ -17,6 +17,5 @@ galaxy_info:
   galaxy_tags:
   - epiloque
   - security
-  - unattended-upgrades
 
 dependencies: []
