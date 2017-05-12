@@ -29,5 +29,5 @@
 - name: start yum-cron
   service:
     name: yum-cron
-    state: running
+    state: started
     enabled: yes
