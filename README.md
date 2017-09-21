@@ -1,14 +1,3 @@
-<p align="right">
-    <a href="https://travis-ci.org/epiloque/ansible-unattended-upgrades">
-        <img src="https://travis-ci.org/epiloque/ansible-unattended-upgrades.svg?branch=master"
-             alt="build status">
-    </a>
-        <a href="https://galaxy.ansible.com/epiloque/unattended-upgrades">
-        <img src="https://img.shields.io/badge/ansible--galaxy-unattended--upgrades-blue.svg"
-             alt="ansible galaxy">
-    </a>
-</p>
-
 unattended-upgrades role
 
 ## Role Variables
@@ -80,7 +69,3 @@ unattended_upgrades_apt_ignore_apps_require_restart: false
   roles:
     - epiloque.unattended-upgrades
 ```
-
-## License
-
-BSD
