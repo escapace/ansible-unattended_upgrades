@@ -2,6 +2,5 @@ localhost ansible_connection=local
 
 [test-images]
 centos image="epiloque/test-centos:7"
-trusty image="epiloque/test-ubuntu:trusty"
 xenial image="epiloque/test-ubuntu:xenial"
 
