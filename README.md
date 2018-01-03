@@ -67,5 +67,5 @@ unattended_upgrades_apt_ignore_apps_require_restart: false
 ```yaml
 - hosts: servers
   roles:
-    - epiloque.unattended-upgrades
+    - escapace.unattended-upgrades
 ```
