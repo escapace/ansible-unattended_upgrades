@@ -6,4 +6,4 @@
 
 - hosts: test-images
   roles:
-  - role: epiloque.unattended-upgrades
+  - role: escapace.unattended-upgrades
