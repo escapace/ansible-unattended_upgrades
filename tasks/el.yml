@@ -12,22 +12,6 @@
     - yum-utils
     - yum-cron
 
-- name: install yum-cron
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
-  with_items:
-    - pygpgme
-    - yum-utils
-    - yum-cron
-
-- name: increase yum timeouts
-  shell: "yum-config-manager --save --setopt {{ item.option }}={{ item.value }}"
-  changed_when: false
-  with_items:
-    - option: timeout
-      value: 60.0
-    - option: retries
-      value: 30
-
 - name: configure yum-cron
   template:
     src: templates/yum-cron.conf.j2
