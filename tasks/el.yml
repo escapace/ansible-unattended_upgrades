@@ -1,16 +1,14 @@
 ---
 
-- name: install the latest version of yum
+- name: install the latest yum version
   yum:
     name: yum
     state: latest
 
-- name: install yum-cron
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=present"
-  with_items:
-    - pygpgme
-    - yum-utils
-    - yum-cron
+- name: install packages
+  yum:
+    name: ["pygpgme", "yum-utils", "yum-cron"]
+    state: present
 
 - name: configure yum-cron
   template:
