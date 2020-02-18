@@ -1,0 +1,40 @@
+# {{ ansible_managed }}
+
+# the following preferences are documented at
+# https://dnf.readthedocs.org/en/latest/automatic.html
+
+[commands]
+
+apply_updates = {{ unattended_upgrades_dnf_apply_updates }}
+download_updates = {{ unattended_upgrades_dnf_download_updates }}
+upgrade_type = {{ unattended_upgrades_dnf_upgrade_type }}
+random_sleep = {{ unattended_upgrades_dnf_random_sleep }}
+
+[emitters]
+
+emit_via = {{ unattended_upgrades_dnf_emit_via }}
+system_name = {{ unattended_upgrades_dnf_system_name }}
+
+[command]
+
+command_format = {{ unattended_upgrades_dnf_command_format }}
+stdin_format = {{ unattended_upgrades_dnf_stdin_format }}
+
+[command_email]
+
+command_format = {{ unattended_upgrades_dnf_email_command_format }}
+stdin_format = {{ unattended_upgrades_dnf_email_stdin_format }}
+email_from = {{ unattended_upgrades_dnf_email_from }}
+email_to = {{ unattended_upgrades_dnf_email_to }}
+
+[email]
+
+email_from = {{ unattended_upgrades_dnf_email_from }}
+email_to = {{ unattended_upgrades_dnf_email_to }}
+email_host = {{ unattended_upgrades_dnf_email_host }}
+
+[base]
+
+{% for key, value in unattended_upgrades_dnf_base_overrides.items() %}
+{{ key }} = {{ value }}
+{% endfor %}
