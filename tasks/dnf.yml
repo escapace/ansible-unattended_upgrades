@@ -9,6 +9,7 @@
   template:
     src: automatic.conf.j2
     dest: /etc/dnf/automatic.conf
+    mode: 0644
 
 - name: Start and enable systemd timer for dnf-automatic
   service:
