@@ -3,7 +3,7 @@ galaxy_info:
   description: unattended upgrades role
   issue_tracker_url: https://github.com/escapace/ansible-unattended_upgrades/issues
   license: Apache-2.0
-  author: Escapace
+  author: escapace
   min_ansible_version: 2.10
   github_branch: trunk
   platforms:
