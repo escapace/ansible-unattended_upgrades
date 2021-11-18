@@ -13,7 +13,7 @@ unattended_upgrades_dnf_random_sleep: 300
 # [emitters]
 
 unattended_upgrades_dnf_emit_via: stdio
-unattended_upgrades_dnf_system_name: "{{ ansible_nodename }}"
+# unattended_upgrades_dnf_system_name: "{{ ansible_nodename }}"
 
 # [command]
 
