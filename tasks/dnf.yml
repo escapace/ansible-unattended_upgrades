@@ -1,18 +1,20 @@
 ---
 
-- name: Install dnf-automatic package
+- name: install dnf-automatic package
   package:
     name: dnf-automatic
     state: present
 
-- name: Deploy dnf-automatic configuration file
+- name: deploy dnf-automatic configuration file
   template:
     src: automatic.conf.j2
     dest: /etc/dnf/automatic.conf
     mode: 0644
 
-- name: Start and enable systemd timer for dnf-automatic
+- name: start and enable systemd timer for dnf-automatic
   service:
     name: dnf-automatic-install.timer
     state: started
-    enabled: yes
+    enabled: true
+  tags:
+    - notest
