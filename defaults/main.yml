@@ -5,8 +5,8 @@
 
 # [commands]
 
-unattended_upgrades_dnf_apply_updates: yes
-unattended_upgrades_dnf_download_updates: yes
+unattended_upgrades_dnf_apply_updates: true
+unattended_upgrades_dnf_download_updates: true
 unattended_upgrades_dnf_upgrade_type: security
 unattended_upgrades_dnf_random_sleep: 300
 
