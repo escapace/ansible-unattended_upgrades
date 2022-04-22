@@ -1,18 +1,18 @@
 ---
 
 - name: install dnf-automatic package
-  package:
+  ansible.builtin.package:
     name: dnf-automatic
     state: present
 
 - name: deploy dnf-automatic configuration file
-  template:
+  ansible.builtin.template:
     src: automatic.conf.j2
     dest: /etc/dnf/automatic.conf
     mode: 0644
 
 - name: start and enable systemd timer for dnf-automatic
-  service:
+  ansible.builtin.service:
     name: dnf-automatic-install.timer
     state: started
     enabled: true
