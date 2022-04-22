@@ -1,4 +1,4 @@
 ---
 
 - name: restart yum-cron
-  service: name=yum-cron state=restarted
+  ansible.builtin.service: name=yum-cron state=restarted
