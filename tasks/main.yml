@@ -1,4 +1,4 @@
 ---
 
-- include_tasks: dnf.yml
+- ansible.builtin.include_tasks: dnf.yml
   when: ansible_os_family == "RedHat"
