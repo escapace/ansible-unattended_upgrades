@@ -17,12 +17,12 @@ unattended_upgrades_dnf_emit_via: stdio
 # [command]
 
 unattended_upgrades_dnf_command_format: cat
-unattended_upgrades_dnf_stdin_format: '{body}'
+unattended_upgrades_dnf_stdin_format: "{body}"
 
 # [command_email]
 
 unattended_upgrades_dnf_email_command_format: mail -s {subject} -r {email_from} {email_to}
-unattended_upgrades_dnf_email_stdin_format: '{body}'
+unattended_upgrades_dnf_email_stdin_format: "{body}"
 
 # [email]
 
