@@ -9,5 +9,6 @@ ignore:
   - .github
   - .ls-lint.yaml
   - .venv
+  - meta/argument_specs.yaml
   - node_modules
   - vendor

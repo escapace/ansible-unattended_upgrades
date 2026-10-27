@@ -1,5 +1,14 @@
 ---
 - name: converge
   hosts: all
+  vars:
+    unattended_upgrades_dnf_default_packages:
+      - bash
+      - firefox
+  pre_tasks:
+    - name: install systemd for role testing
+      ansible.builtin.package:
+        name: systemd
+        state: present
   roles:
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

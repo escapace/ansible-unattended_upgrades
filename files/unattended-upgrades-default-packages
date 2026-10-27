@@ -1,0 +1,87 @@
+#!/usr/bin/python3
+"""Upgrade selected installed packages after the normal DNF automatic pass."""
+
+import configparser
+import os
+import re
+import subprocess
+import sys
+import tempfile
+
+
+def main():
+    packages = sys.argv[1:]
+    if not packages or any(
+        re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9+_.-]*", package) is None
+        for package in packages
+    ):
+        raise ValueError("expected plain RPM package names without options, globs or paths")
+    if len(packages) != len(set(packages)):
+        raise ValueError("duplicate default-mode package names")
+
+    automatic = configparser.ConfigParser(interpolation=None)
+    with open("/etc/dnf/automatic.conf", encoding="utf-8") as source:
+        automatic.read_file(source)
+    upgrade_type = automatic.get("commands", "upgrade_type", fallback="default")
+    if upgrade_type not in ("default", "security"):
+        raise ValueError("unsupported upgrade_type: " + upgrade_type)
+    if upgrade_type == "default":
+        print("unattended_upgrades: the normal pass already covers all packages")
+        return
+
+    apply_updates = automatic.getboolean("commands", "apply_updates", fallback=False)
+    download_updates = automatic.getboolean("commands", "download_updates", fallback=False)
+    if not apply_updates and not download_updates:
+        print("unattended_upgrades: default-package downloads and installation are disabled")
+        return
+
+    # Preserve normal DNF configuration and automatic.conf's base overrides.
+    # A private configuration file keeps credentials out of process arguments.
+    dnf_config = configparser.ConfigParser(interpolation=None, strict=False)
+    base_config_file = automatic.get(
+        "commands", "base_config_file", fallback="/etc/dnf/dnf.conf"
+    )
+    with open(base_config_file, encoding="utf-8") as source:
+        dnf_config.read_file(source)
+    if not dnf_config.has_section("main"):
+        dnf_config.add_section("main")
+    if automatic.has_section("base"):
+        for key, value in automatic.items("base"):
+            dnf_config.set("main", key, value)
+
+    # Query the same RPM database that the DNF transaction will update.
+    installroot = dnf_config.get("main", "installroot", fallback="/")
+    if not os.path.isabs(installroot):
+        raise ValueError("DNF installroot must be an absolute path")
+    installed = subprocess.run(
+        ["/usr/bin/rpm", "--root", installroot, "-qa", "--queryformat", "%{NAME}\\n"],
+        check=True, stdout=subprocess.PIPE, universal_newlines=True,
+    ).stdout.splitlines()
+    installed = set(installed)
+    selected = [package for package in packages if package in installed]
+    missing = [package for package in packages if package not in installed]
+    if missing:
+        print("unattended_upgrades: skipping uninstalled packages: " + ", ".join(missing))
+    if not selected:
+        print("unattended_upgrades: no selected packages are installed")
+        return
+
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", prefix="unattended-upgrades-", suffix=".conf"
+    ) as configuration:
+        dnf_config.write(configuration)
+        configuration.flush()
+        command = ["/usr/bin/dnf", "--config", configuration.name, "--assumeyes"]
+        if not apply_updates:
+            command.append("--downloadonly")
+        command.extend(["upgrade", "--"] + selected)
+        print("unattended_upgrades: default-mode packages: " + ", ".join(selected), flush=True)
+        subprocess.run(command, check=True)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (OSError, ValueError, configparser.Error, subprocess.CalledProcessError) as error:
+        print("unattended_upgrades: default-package update failed: " + str(error), file=sys.stderr)
+        sys.exit(1)

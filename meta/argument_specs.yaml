@@ -1,0 +1,63 @@
+---
+argument_specs:
+  main:
+    short_description: configure scheduled DNF updates without starting them
+    options:
+      unattended_upgrades_dnf_apply_updates:
+        type: bool
+        default: true
+        description: Install available updates; implies downloading them.
+      unattended_upgrades_dnf_download_updates:
+        type: bool
+        default: true
+        description: Download updates when installation is disabled.
+      unattended_upgrades_dnf_upgrade_type:
+        type: str
+        default: security
+        choices: [default, security]
+        description: Apply all updates or only updates with a security advisory.
+      unattended_upgrades_dnf_default_packages:
+        type: list
+        elements: str
+        default: []
+        description: Unique plain RPM names whose installed packages also receive non-security updates after a successful security pass.
+      unattended_upgrades_dnf_random_sleep:
+        type: int
+        default: 300
+        description: Additional DNF random delay in seconds.
+      unattended_upgrades_dnf_emit_via:
+        type: str
+        default: stdio
+        description: Comma-separated DNF automatic emitter names.
+      unattended_upgrades_dnf_command_format:
+        type: str
+        default: cat
+        description: Command-emitter format.
+      unattended_upgrades_dnf_stdin_format:
+        type: str
+        default: "{body}"
+        description: Command-emitter standard input format.
+      unattended_upgrades_dnf_email_command_format:
+        type: str
+        default: mail -s {subject} -r {email_from} {email_to}
+        description: Email-command emitter format.
+      unattended_upgrades_dnf_email_stdin_format:
+        type: str
+        default: "{body}"
+        description: Email-command emitter standard input format.
+      unattended_upgrades_dnf_email_from:
+        type: str
+        default: root
+        description: Email sender.
+      unattended_upgrades_dnf_email_to:
+        type: str
+        default: root
+        description: Email recipient.
+      unattended_upgrades_dnf_email_host:
+        type: str
+        default: localhost
+        description: SMTP host.
+      unattended_upgrades_dnf_base_overrides:
+        type: dict
+        default: {}
+        description: DNF base configuration overrides shared by both update transactions.

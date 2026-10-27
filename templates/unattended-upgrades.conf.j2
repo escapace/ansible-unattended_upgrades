@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+[Service]
+# The vendor --installupdates flag overrides apply_updates=false.
+ExecStart=
+ExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer
+{% if unattended_upgrades_dnf_default_packages | length > 0 %}
+ExecStartPost=/usr/local/libexec/unattended-upgrades-default-packages {{ unattended_upgrades_dnf_default_packages | join(' ') }}
+{% endif %}

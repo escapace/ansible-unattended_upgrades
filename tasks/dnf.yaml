@@ -1,4 +1,21 @@
 ---
+- name: validate the default-mode package list
+  ansible.builtin.assert:
+    that:
+      - unattended_upgrades_dnf_default_packages is sequence
+      - unattended_upgrades_dnf_default_packages is not string
+      - unattended_upgrades_dnf_default_packages is not mapping
+      - unattended_upgrades_dnf_default_packages | unique(case_sensitive=true) | length == unattended_upgrades_dnf_default_packages | length
+    fail_msg: unattended_upgrades_dnf_default_packages must be a list of unique package names.
+
+- name: validate default-mode package names
+  ansible.builtin.assert:
+    that:
+      - item is string
+      - item is match('^[a-zA-Z0-9][a-zA-Z0-9+_.-]*\Z')
+    fail_msg: Default-mode packages must be plain RPM names, without options, versions, globs or paths.
+  loop: "{{ unattended_upgrades_dnf_default_packages }}"
+
 - name: install dnf-automatic package
   ansible.builtin.package:
     name: dnf-automatic
@@ -8,7 +25,56 @@
   ansible.builtin.template:
     src: automatic.conf.j2
     dest: /etc/dnf/automatic.conf
+    owner: root
+    group: root
     mode: "0644"
+
+- name: prepare the default-mode package updater
+  when: unattended_upgrades_dnf_default_packages | length > 0
+  block:
+    - name: install python for the default-mode package updater
+      ansible.builtin.package:
+        name: python3
+        state: present
+
+    - name: create the local updater executable directory
+      ansible.builtin.file:
+        path: /usr/local/libexec
+        owner: root
+        group: root
+        mode: "0755"
+        state: directory
+
+    - name: install the default-mode package updater
+      ansible.builtin.copy:
+        src: unattended-upgrades-default-packages
+        dest: /usr/local/libexec/unattended-upgrades-default-packages
+        owner: root
+        group: root
+        mode: "0755"
+
+- name: remove the unused default-mode package updater
+  ansible.builtin.file:
+    path: /usr/local/libexec/unattended-upgrades-default-packages
+    state: absent
+  when: unattended_upgrades_dnf_default_packages | length == 0
+
+- name: create the automatic update service configuration directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/dnf-automatic-install.service.d
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+
+- name: configure ordered automatic updates and honor configured update modes
+  ansible.builtin.template:
+    src: unattended-upgrades.conf.j2
+    dest: /etc/systemd/system/dnf-automatic-install.service.d/10-unattended-upgrades.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: unattended_upgrades daemon-reload
 
 - name: enable dnf-automatic systemd timer
   ansible.builtin.systemd_service:

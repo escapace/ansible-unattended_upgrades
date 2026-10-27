@@ -1,0 +1,82 @@
+---
+- name: verify helper behavior
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: run helper unit tests without package transactions
+      ansible.builtin.command:
+        argv:
+          - "{{ ansible_playbook_python }}"
+          - "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}/tests/test-default-packages.py"
+          - -v
+      changed_when: false
+
+- name: verify image configuration
+  hosts: all
+  tasks:
+    - name: inspect the installed helper
+      ansible.builtin.stat:
+        path: /usr/local/libexec/unattended-upgrades-default-packages
+      register: unattended_upgrades_test_helper
+
+    - name: read the service drop-in
+      ansible.builtin.slurp:
+        src: /etc/systemd/system/dnf-automatic-install.service.d/10-unattended-upgrades.conf
+      register: unattended_upgrades_test_dropin
+
+    - name: verify ordered commands and helper permissions
+      ansible.builtin.assert:
+        that:
+          - unattended_upgrades_test_helper.stat.mode == '0755'
+          - unattended_upgrades_test_helper.stat.uid == 0
+          - unattended_upgrades_test_helper.stat.gid == 0
+          - >-
+            'ExecStart=\nExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer\n'
+            in (unattended_upgrades_test_dropin.content | b64decode)
+          - >-
+            'ExecStartPost=/usr/local/libexec/unattended-upgrades-default-packages bash firefox\n'
+            in (unattended_upgrades_test_dropin.content | b64decode)
+
+    - name: validate the merged systemd service
+      ansible.builtin.command:
+        argv:
+          - systemd-analyze
+          - verify
+          - /usr/lib/systemd/system/dnf-automatic-install.service
+      changed_when: false
+
+    - name: inspect persistent timer enablement
+      ansible.builtin.command:
+        argv:
+          - systemctl
+          - is-enabled
+          - dnf-automatic-install.timer
+      register: unattended_upgrades_test_timer
+      changed_when: false
+
+    - name: verify persistent timer enablement
+      ansible.builtin.assert:
+        that:
+          - unattended_upgrades_test_timer.stdout == 'enabled'
+
+    - name: remove the configured package exceptions
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        unattended_upgrades_dnf_default_packages: []
+
+    - name: inspect the removed helper
+      ansible.builtin.stat:
+        path: /usr/local/libexec/unattended-upgrades-default-packages
+      register: unattended_upgrades_test_removed_helper
+
+    - name: read the service drop-in without package exceptions
+      ansible.builtin.slurp:
+        src: /etc/systemd/system/dnf-automatic-install.service.d/10-unattended-upgrades.conf
+      register: unattended_upgrades_test_empty_dropin
+
+    - name: verify removal of the extra command and helper
+      ansible.builtin.assert:
+        that:
+          - not unattended_upgrades_test_removed_helper.stat.exists
+          - "'ExecStartPost=' not in (unattended_upgrades_test_empty_dropin.content | b64decode)"
