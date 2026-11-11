@@ -5,11 +5,11 @@
 # [commands]
 
 unattended_upgrades_dnf_apply_updates: true
-unattended_upgrades_dnf_download_updates: true
-unattended_upgrades_dnf_upgrade_type: security
 unattended_upgrades_dnf_default_packages: []
+unattended_upgrades_dnf_download_updates: true
 unattended_upgrades_dnf_random_sleep: 300
 
+unattended_upgrades_dnf_upgrade_type: security
 # [emitters]
 
 unattended_upgrades_dnf_emit_via: stdio
@@ -28,9 +28,9 @@ unattended_upgrades_dnf_email_stdin_format: "{body}"
 # [email]
 
 unattended_upgrades_dnf_email_from: root
-unattended_upgrades_dnf_email_to: root
 unattended_upgrades_dnf_email_host: localhost
 
+unattended_upgrades_dnf_email_to: root
 # [base]
 
 # this dict can be used to override arbitrary settings from dnf.conf
